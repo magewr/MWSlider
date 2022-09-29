@@ -115,15 +115,15 @@ class MWSlider: UISlider {
         }
     }
     
-    func setLottieImage(urlString: String) {
+    func setLottieImage(src: String) {
         self.type = .lottie
-        self.lottieUrlString = urlString
+        self.lottieUrlString = src
         self.imageUrlString = nil
     }
     
-    func setImage(urlString: String) {
+    func setImage(src: String) {
         self.type = .image
-        self.imageUrlString = urlString
+        self.imageUrlString = src
         self.lottieUrlString = nil
     }
     
@@ -144,33 +144,55 @@ class MWSlider: UISlider {
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         
-        if type == .lottie, let lottieName = self.lottieUrlString, let url = URL(string: lottieName) {
-            self.bgImage.isHidden = true
-            
-            Animation.loadedFrom(url: url, closure: { (animation) in
-                if let animation = animation {
-                    self.bgLottieView.animation = animation
-                    self.bgLottieView.loopMode = .loop
-                    self.bgLottieView.contentMode = .scaleToFill
-                    self.bgLottieView.backgroundBehavior = .pauseAndRestore
-                    self.bgLottieView.play()
-                }
-                else {
-                    self.drawDefault()
-                }
-            }, animationCache: nil)
-            self.bgLottieView.isUserInteractionEnabled = false
-            self.addSubview(self.bgLottieView)
-            self.sendSubviewToBack(self.bgLottieView)
+        if type == .lottie, let lottieName = self.lottieUrlString {
+            if lottieName.starts(with: "http"), let url = URL(string: lottieName) {
+                self.bgImage.isHidden = true
+                
+                Animation.loadedFrom(url: url, closure: { (animation) in
+                    if let animation = animation {
+                        self.bgLottieView.animation = animation
+                        self.bgLottieView.loopMode = .loop
+                        self.bgLottieView.contentMode = .scaleToFill
+                        self.bgLottieView.backgroundBehavior = .pauseAndRestore
+                        self.bgLottieView.play()
+                    }
+                    else {
+                        self.drawDefault()
+                    }
+                }, animationCache: nil)
+                self.bgLottieView.isUserInteractionEnabled = false
+                self.addSubview(self.bgLottieView)
+                self.sendSubviewToBack(self.bgLottieView)
+            }
+            else if let animation = Animation.named(lottieName) {
+                self.bgImage.isHidden = true
+                self.bgLottieView.animation = animation
+                self.bgLottieView.isUserInteractionEnabled = false
+                self.addSubview(self.bgLottieView)
+                self.sendSubviewToBack(self.bgLottieView)
+            }
+            else {
+                drawDefault()
+            }
         }
-        else if type == .image, let imageName = self.imageUrlString, let url = URL(string: imageName) {
-            self.bgImage.isHidden = false
-            self.bgLottieView.isHidden = false
-            self.bgImage.sd_setImage(with: url, completed: {(image, error, cache, url) in
-                if error != nil {
-                    self.drawDefault()
-                }
-            })
+        else if type == .image, let imageName = self.imageUrlString {
+            if imageName.starts(with: "http"), let url = URL(string: imageName) {
+                self.bgImage.isHidden = false
+                self.bgLottieView.isHidden = false
+                self.bgImage.sd_setImage(with: url, completed: {(image, error, cache, url) in
+                    if error != nil {
+                        self.drawDefault()
+                    }
+                })
+            }
+            else if let image = UIImage(named: imageName) {
+                self.bgImage.isHidden = false
+                self.bgLottieView.isHidden = false
+                self.bgImage.image = image
+            }
+            else {
+                self.drawDefault()
+            }
         }
         else if type == .gradient, let colors = gradientColors {
             self.bgLottieView.isHidden = true
@@ -200,7 +222,7 @@ class MWSlider: UISlider {
         self.bgLottieView.isHidden = true
         self.bgImage.isHidden = false
         let gradient: CAGradientLayer = CAGradientLayer()
-        gradient.colors = [UIColor(hex: 0x38D790).cgColor, UIColor(hex: 0x4A79F1).cgColor]
+        gradient.colors = [UIColor(hex: 0xE0E0E0).cgColor, UIColor(hex: 0x606060).cgColor]
         gradient.startPoint = CGPoint(x: 0.0, y: 0.5)
         gradient.endPoint = CGPoint(x: 1.0, y: 0.5)
         gradient.frame = self.bgImage.bounds

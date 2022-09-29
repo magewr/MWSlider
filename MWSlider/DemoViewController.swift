@@ -16,14 +16,14 @@ class DemoViewController: UIViewController {
     
     let imageSlider = MWSlider().then {
         $0.setTitle(title: "image Slider")
-        $0.setImage(urlString: "https://thumbs.dreamstime.com/b/empty-straight-road-top-aerial-view-highway-marking-seamless-roadway-horizontal-template-isolated-white-background-233113314.jpg")
+        $0.setImage(src: "https://thumbs.dreamstime.com/b/empty-straight-road-top-aerial-view-highway-marking-seamless-roadway-horizontal-template-isolated-white-background-233113314.jpg")
         $0.maximumValue = 100
         $0.value = 50
     }
     
     let lottieSlider = MWSlider().then {
         $0.setTitle(title: "lottie Slider")
-        $0.setLottieImage(urlString: "https://assets2.lottiefiles.com/packages/lf20_fs64xxd6.json")
+        $0.setLottieImage(src: "https://assets2.lottiefiles.com/packages/lf20_fs64xxd6.json")
         $0.maximumValue = 500
         $0.value = 350
     }
